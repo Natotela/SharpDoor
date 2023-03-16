@@ -35,7 +35,7 @@ namespace SharpDoor {
 			Console.WriteLine(@"  ____) | | | | (_| | |  | |_) | |__| | (_) | (_) | |   ");
 			Console.WriteLine(@" |_____/|_| |_|\__,_|_|  | .__/|_____/ \___/ \___/|_|   ");
 			Console.WriteLine(@"                         | |                            ");
-			Console.WriteLine(@"  v1.0.0                 |_|                            ");
+			Console.WriteLine(@"  v1.0.0 Sha256          |_|                            ");
 
 			Console.WriteLine("\nAllow Multiple RDP (Remote Desktop) Sessions By Patching termsrv.dll File\n");
 
@@ -98,24 +98,24 @@ namespace SharpDoor {
 			return process.Start();
 		}
 
-		static string GetMd5Hash(string input) {
-			MD5 md5Hash = MD5.Create();
-
+		static string GetSha256Hash(string input) {
+		    using (SHA256 sha256Hash = SHA256.Create()) {
 			// Convert the input string to a byte array and compute the hash.
-			byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+			byte[] data = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-			// Create a new Stringbuilder to collect the bytes
+			// Create a new StringBuilder to collect the bytes
 			// and create a string.
 			StringBuilder sBuilder = new StringBuilder();
 
 			// Loop through each byte of the hashed data 
 			// and format each one as a hexadecimal string.
 			for (int i = 0; i < data.Length; i++) {
-				sBuilder.Append(data[i].ToString("x2"));
+			    sBuilder.Append(data[i].ToString("x2"));
 			}
 
 			// Return the hexadecimal string.
 			return sBuilder.ToString();
+		    }
 		}
 
 		public static bool isAdminRight() {
@@ -259,8 +259,8 @@ namespace SharpDoor {
 			// Save it to another location.
 			File.WriteAllBytes(patchedFile, fileContent);
 
-			Console.WriteLine("\nOriginal File Hash : " + GetMd5Hash(originalFile));
-			Console.WriteLine("Patched File Hash : " + GetMd5Hash(patchedFile));
+			Console.WriteLine("\nOriginal File Hash : " + GetSha256Hash(originalFile));
+			Console.WriteLine("Patched File Hash : " + GetSha256Hash(patchedFile));
 			Console.WriteLine("\n[*] " + patchedFile + " was patched successfully\n");
 		}
 	}
